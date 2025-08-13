@@ -1,0 +1,22 @@
+services:
+  localstack:
+    image: 'localstack/localstack:latest'
+    container_name: 'localstack'
+    environment:
+      - SERVICES=sqs
+      - DEFAULT_REGION=us-east-1
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - DEBUG=1
+      - DATA_DIR=/var/lib/localstack
+    ports:
+      - "127.0.0.1:4566:4566"
+      - "127.0.0.1:4510-4559:4510-4559"
+    volumes:
+      - localstack-data:/var/lib/localstack
+      - ./scripts/create-queue.sh:/etc/localstack/init/ready.d/01-create-queue.sh
+
+volumes:
+  localstack-data:
+    name: localstack-volume 
