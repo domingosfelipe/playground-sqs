@@ -1,0 +1,38 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+*.swp
+
+# IntelliJ IDEA
+.idea/
+*.iml
+out/
+
+# Gradle
+.gradle/
+build/
+
+# Java
+*.class
+*.log
+*.ctxt
+hs_err_pid*
+
+# Spring Boot
+*.war
+*.jar
+
+# Logs
+logs/
+*.log
+*.out
+*.err
+
+# Temporary files
+tmp/
+temp/
