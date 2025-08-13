@@ -47,7 +47,20 @@ jobs:
           else
             gradle build
           fi
+      - name: Rename artifact with Java version
+        run: |
+          set -e
+          JAR=$(ls build/libs/*SNAPSHOT.jar | head -n1)
+          BASENAME=$(basename "$JAR" .jar)
+          NEW="build/libs/${BASENAME}-java${{ matrix.java }}.jar"
+          mv "$JAR" "$NEW"
+          echo "RENAMED_JAR=$NEW" >> $GITHUB_ENV
       - name: Generate build provenance
         uses: actions/attest-build-provenance@v1
         with:
-          subject-path: build/libs/*.jar
+          subject-path: build/libs/*-java${{ matrix.java }}.jar
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-java-${{ matrix.java }}
+          path: build/libs/*-java${{ matrix.java }}.jar
