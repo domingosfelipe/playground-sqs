@@ -1,0 +1,40 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /playground-sqs
+
+spring:
+  application:
+    name: playground-sqs
+  main:
+    banner-mode: off
+  jackson:
+    time-zone: America/Sao_Paulo
+  cloud:
+    aws:
+      region:
+        static: us-east-1
+      credentials:
+        profile.name: localstack
+        access-key: test
+        secret-key: test
+      sqs:
+        endpoint: http://localhost:4566
+        region: us-east-1
+  threads:
+    virtual:
+      enabled: true
+
+management:
+  endpoints.web.exposure.include: health
+
+# Custom
+sqs:
+  queues:
+    sample: sample-queue
+
+logging:
+  level:
+    org.springframework: info
+    io.awspring.cloud.sqs: debug
+    software.amazon.awssdk.request: debug
