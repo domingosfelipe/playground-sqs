@@ -24,13 +24,13 @@ class AbstractConsumerTest {
   final String queue = "https://domain.com/playground";
   TestableConsumer consumer;
 
-  static class TestableConsumer extends AbstractConsumer<String> {
+  static class TestableConsumer extends AbstractConsumer {
     TestableConsumer(String queue, SqsAsyncClient client) { super(queue, client); }
-    void poll() { consume(); }
+    public void consume() { super.consume(); }
   }
 
   @BeforeEach
-  void setUp() {
+  void setup() {
     consumer = new TestableConsumer(queue, sqsAsyncClient);
   }
 
@@ -38,7 +38,7 @@ class AbstractConsumerTest {
   void testConsume_handlingError() {
     when(sqsAsyncClient.receiveMessage(any(ReceiveMessageRequest.class)))
         .thenReturn(CompletableFuture.failedFuture(new RuntimeException("exception")));
-    consumer.poll();
+    consumer.consume();
     verifyNoMoreInteractions(sqsAsyncClient);
   }
 
@@ -49,7 +49,7 @@ class AbstractConsumerTest {
         .build();
     when(sqsAsyncClient.receiveMessage(any(ReceiveMessageRequest.class)))
         .thenReturn(CompletableFuture.completedFuture(response));
-    consumer.poll();
+    consumer.consume();
     verifyNoMoreInteractions(sqsAsyncClient);
   }
 
@@ -62,7 +62,7 @@ class AbstractConsumerTest {
         .thenReturn(CompletableFuture.completedFuture(response));
     when(sqsAsyncClient.deleteMessage(any(DeleteMessageRequest.class)))
         .thenReturn(CompletableFuture.completedFuture(DeleteMessageResponse.builder().build()));
-    consumer.poll();
+    consumer.consume();
 
     var receiveCaptor = ArgumentCaptor.forClass(ReceiveMessageRequest.class);
     verify(sqsAsyncClient).receiveMessage(receiveCaptor.capture());

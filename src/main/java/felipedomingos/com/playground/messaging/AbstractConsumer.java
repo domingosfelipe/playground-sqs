@@ -7,7 +7,7 @@ import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-public abstract class AbstractConsumer<T> {
+public abstract class AbstractConsumer {
 
   private final String queue;
   private final SqsAsyncClient sqsAsyncClient;
@@ -26,24 +26,23 @@ public abstract class AbstractConsumer<T> {
         .visibilityTimeout(30)
         .build();
 
-    var future = sqsAsyncClient.receiveMessage(receiveRequest);
+    sqsAsyncClient.receiveMessage(receiveRequest)
+        .whenComplete((response, throwable) -> {
+          if (throwable != null) {
+            logger.error("Queue: {} error while receiving messages: {}", queue, throwable.getMessage(), throwable);
+            return;
+          }
 
-    future.whenComplete((response, throwable) -> {
-      if (throwable != null) {
-        logger.error("Queue: {} error while receiving messages: {}", queue, throwable.getMessage(), throwable);
-        return;
-      }
+          if (response.hasMessages() == false) {
+            logger.warn("Queue: {} no messages to receive!", queue);
+            return;
+          }
 
-      if (response.hasMessages() == false) {
-        logger.warn("Queue: {} no messages to receive!", queue);
-        return;
-      }
-
-      response.messages().forEach(msg -> {
-        logger.info("Queue: {} message received: {} / body: {}", queue, msg.messageId(), msg.body());
-        var deleteRequest = DeleteMessageRequest.builder().queueUrl(queue).receiptHandle(msg.receiptHandle()).build();
-        sqsAsyncClient.deleteMessage(deleteRequest).join();
-      });
-    });
+          response.messages().forEach(msg -> {
+            logger.info("Queue: {} message received: {} / body: {}", queue, msg.messageId(), msg.body());
+            var deleteRequest = DeleteMessageRequest.builder().queueUrl(queue).receiptHandle(msg.receiptHandle()).build();
+            sqsAsyncClient.deleteMessage(deleteRequest).join();
+          });
+        });
   }
 }

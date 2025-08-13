@@ -7,14 +7,14 @@ import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 
 @Component
-public class SampleQueueConsumer extends AbstractConsumer<Object> {
+public class SampleQueueConsumer extends AbstractConsumer {
 
     public SampleQueueConsumer(@Value("${sqs.queues.sample}") String queue, SqsAsyncClient sqsAsyncClient) {
         super(queue, sqsAsyncClient);
     }
 
     @Scheduled(fixedRate = 20000)
-    public void poll() {
+    public void consume() {
         super.consume();
     }
 }

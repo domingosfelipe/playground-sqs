@@ -14,18 +14,18 @@ import static org.mockito.Mockito.*;
 class SampleQueueConsumerTest {
 
   @Test
-  void testPoll() {
+  void testConsume() {
     var queue = "https://domain.com/playground";
     var sqsAsyncClient = mock(SqsAsyncClient.class);
     var spy = spy(new SampleQueueConsumer(queue, sqsAsyncClient));
-    doNothing().when(spy).poll();
-    spy.poll();
+    doNothing().when(spy).consume();
+    spy.consume();
     verifyNoMoreInteractions(spy);
   }
 
   @Test
-  void poll_temScheduledFixedRateDe20000ms() throws NoSuchMethodException {
-    var method = SampleQueueConsumer.class.getMethod("poll");
+  void consume_hasScheduledFixedRateDe20000Ms() throws NoSuchMethodException {
+    var method = SampleQueueConsumer.class.getMethod("consume");
     var scheduled = method.getAnnotation(Scheduled.class);
     assertNotNull(scheduled, "@Scheduled annotation missing");
     assertEquals(20000L, scheduled.fixedRate(), "fixedRate invalid");
