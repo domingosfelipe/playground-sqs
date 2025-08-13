@@ -8,13 +8,15 @@ on:
 
 permissions:
   contents: read
+  id-token: write
+  attestations: write
 
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [21]
+        java: [17, 21]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,13 +27,19 @@ jobs:
           java-version: ${{ matrix.java }}
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.10.2
       - name: Grant execute to wrappers
         run: |
           if [ -f ./gradlew ]; then chmod +x ./gradlew; fi
-      - name: Run tests (Gradle)
+      - name: Build (includes tests)
         run: |
           if [ -x ./gradlew ] && [ -f ./gradle/wrapper/gradle-wrapper.jar ]; then
-            ./gradlew test
+            ./gradlew build
           else
-            gradle test
+            gradle build
           fi
+      - name: Generate build provenance
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: build/libs/*.jar
