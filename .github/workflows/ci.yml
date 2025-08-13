@@ -30,7 +30,7 @@ jobs:
           if [ -f ./gradlew ]; then chmod +x ./gradlew; fi
       - name: Run tests (Gradle)
         run: |
-          if [ -x ./gradlew ]; then
+          if [ -x ./gradlew ] && [ -f ./gradle/wrapper/gradle-wrapper.jar ]; then
             ./gradlew test
           else
             gradle test
