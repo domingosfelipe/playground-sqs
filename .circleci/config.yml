@@ -1,0 +1,65 @@
+version: 2.1
+
+executors:
+  jdk21:
+    docker:
+      - image: gradle:8.9.0-jdk21
+    working_directory: ~/project
+    resource_class: small
+
+commands:
+  ensure_wrapper:
+    steps:
+      - run:
+          name: Ensure Gradle wrapper
+          command: |
+            chmod +x ./gradlew || true
+            if [ ! -f gradle/wrapper/gradle-wrapper.jar ] || [ ! -f ./gradlew ]; then
+              echo "Gradle wrapper missing. Bootstrapping with system Gradle..."
+              gradle wrapper --gradle-version 8.9
+              chmod +x ./gradlew
+            fi
+
+jobs:
+  deps:
+    executor: jdk21
+    steps:
+      - checkout
+      - ensure_wrapper
+      - run: ./gradlew --no-daemon --refresh-dependencies
+
+  check:
+    executor: jdk21
+    steps:
+      - checkout
+      - ensure_wrapper
+      - run: ./gradlew check
+
+  test_unit:
+    executor: jdk21
+    steps:
+      - checkout
+      - ensure_wrapper
+      - run: ./gradlew test
+
+  build:
+    executor: jdk21
+    steps:
+      - checkout
+      - ensure_wrapper
+      - run: ./gradlew build
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - deps
+      - check:
+          requires:
+            - deps
+      - test_unit:
+          requires:
+            - check
+      - build:
+          requires:
+            - test_unit
