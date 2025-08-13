@@ -23,6 +23,7 @@ dependencies {
     implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs:3.2.1'
     implementation 'software.amazon.awssdk:sqs'
     testImplementation platform('org.junit:junit-bom:5.10.0')
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation("org.mockito:mockito-junit-jupiter:5.12.0")
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
