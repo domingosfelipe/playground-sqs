@@ -12,7 +12,7 @@
 
 --- 
 
-# playground-sqs
+# Playground SQS
 
 A sample project demonstrating how to use **AWS SQS** locally with **LocalStack**, built with **Java 21** and **Gradle**.
 
