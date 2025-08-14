@@ -52,8 +52,8 @@ workflows:
     jobs:
       - deps
       - check:
-          requires: [deps]
+          requires: [ deps ]
       - test_unit:
-          requires: [check]
+          requires: [ deps, check ]
       - build:
-          requires: [check, test_unit]
+          requires: [ deps, check, test_unit ]
