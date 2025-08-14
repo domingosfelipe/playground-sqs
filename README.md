@@ -12,7 +12,7 @@ A sample project demonstrating how to use AWS SQS locally with LocalStack, built
   <a href="https://app.circleci.com/pipelines/github/domingosfelipe/playground-sqs?branch=main">
     <img alt="CircleCI Status" src="https://img.shields.io/circleci/build/github/domingosfelipe/playground-sqs/main?label=CircleCI&style=plastic">
   </a>
-    <a href="https://github.com/domingosfelipe/playground-sqs/blob/main/LICENSE">
+    <a href="https://github.com/domingosfelipe/playground-sqs/blob/main/LICENSE.txt">
     <img alt="License" src="https://img.shields.io/github/license/domingosfelipe/playground-sqs?label=License&style=plastic&color=blue">
   </a>  
 </p>
