@@ -27,21 +27,18 @@ jobs:
       - checkout
       - ensure_wrapper
       - run: ./gradlew --no-daemon --refresh-dependencies
-
   check:
     executor: jdk21
     steps:
       - checkout
       - ensure_wrapper
       - run: ./gradlew check
-
   test_unit:
     executor: jdk21
     steps:
       - checkout
       - ensure_wrapper
       - run: ./gradlew test
-
   build:
     executor: jdk21
     steps:
@@ -55,11 +52,8 @@ workflows:
     jobs:
       - deps
       - check:
-          requires:
-            - deps
+          requires: [deps]
       - test_unit:
-          requires:
-            - check
+          requires: [check]
       - build:
-          requires:
-            - test_unit
+          requires: [check, test_unit]
