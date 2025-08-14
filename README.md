@@ -14,9 +14,9 @@
 
 # playground-sqs
 
-A sample project demonstrating how to use AWS SQS locally with LocalStack, built with Java 21 and Gradle.
+A sample project demonstrating how to use **AWS SQS** locally with **LocalStack**, built with **Java 21** and **Gradle**.
 
-> [!WARNING]
+> [!CAUTION]
 > This repository is provided for study purposes only. No warranty or support is offered.
 
 ## Requirements
@@ -45,7 +45,7 @@ A sample project demonstrating how to use AWS SQS locally with LocalStack, built
     ./gradlew bootRun
     ```
 
-4. The project is now running locally :tada:!
+4. The project is now running locally :tada:
 
 > [!TIP]
 > Use [LocalStack](https://app.localstack.cloud/sign-in) website to manage all project queues
