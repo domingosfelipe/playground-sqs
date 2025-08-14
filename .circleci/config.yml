@@ -6,54 +6,82 @@ executors:
       - image: gradle:8.9.0-jdk21
     working_directory: ~/project
     resource_class: small
+    environment:
+      GRADLE_USER_HOME: ~/.gradle
 
 commands:
   ensure_wrapper:
     steps:
       - run:
-          name: Ensure Gradle wrapper
+          name: Ensure/Bootstrap Gradle Wrapper
           command: |
-            chmod +x ./gradlew || true
-            if [ ! -f gradle/wrapper/gradle-wrapper.jar ] || [ ! -f ./gradlew ]; then
-              echo "Gradle wrapper missing. Bootstrapping with system Gradle..."
-              gradle wrapper --gradle-version 8.9
+            set -e
+            if [ -x ./gradlew ] && [ -f gradle/wrapper/gradle-wrapper.properties ] && [ -f gradle/wrapper/gradle-wrapper.jar ]; then
+              chmod +x ./gradlew
+            else
+              echo "Gradle wrapper incompleto/ausente; gerando com Gradle instalado no container..."
+              if [ -f gradle/wrapper/gradle-wrapper.properties ]; then
+                DIST_VER=$(grep -oE 'gradle-[0-9][^/-]*' gradle/wrapper/gradle-wrapper.properties | head -1 | cut -d- -f2)
+              fi
+              if [ -z "$DIST_VER" ]; then
+                DIST_VER=8.9
+              fi
+              gradle wrapper --gradle-version "$DIST_VER" --no-daemon
               chmod +x ./gradlew
             fi
+  restore_gradle_cache:
+    steps:
+      - restore_cache:
+          keys:
+            - v1-gradle-{{ .Branch }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}-{{ checksum "build.gradle" }}-{{ checksum "build.gradle.kts" }}
+            - v1-gradle-{{ .Branch }}-
+            - v1-gradle-
+  save_gradle_cache:
+    steps:
+      - save_cache:
+          key: v1-gradle-{{ .Branch }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}-{{ checksum "build.gradle" }}-{{ checksum "build.gradle.kts" }}
+          paths:
+            - ~/.gradle/caches
+            - ~/.gradle/wrapper
 
 jobs:
-  deps:
+  test:
     executor: jdk21
     steps:
       - checkout
       - ensure_wrapper
-      - run: ./gradlew --no-daemon --refresh-dependencies
-  check:
-    executor: jdk21
-    steps:
-      - checkout
-      - ensure_wrapper
-      - run: ./gradlew check
-  test_unit:
-    executor: jdk21
-    steps:
-      - checkout
-      - ensure_wrapper
-      - run: ./gradlew test
+      - restore_gradle_cache
+      - run:
+          name: Tests and check
+          command: ./gradlew --no-daemon clean check jacocoTestReport
+      - save_gradle_cache
+      - store_test_results:
+          path: build/test-results
+      - store_artifacts:
+          path: build/reports/tests
+      - store_artifacts:
+          path: build/reports/jacoco/test
+      - store_artifacts:
+          path: build/reports/jacoco/test/html
+
   build:
     executor: jdk21
     steps:
       - checkout
       - ensure_wrapper
-      - run: ./gradlew build
+      - restore_gradle_cache
+      - run:
+          name: Build
+          command: ./gradlew --no-daemon assemble -x test -x check
+      - save_gradle_cache
+      - store_artifacts:
+          path: build/libs
 
 workflows:
   version: 2
   build_and_test:
     jobs:
-      - deps
-      - check:
-          requires: [ deps ]
-      - test_unit:
-          requires: [ deps, check ]
+      - test
       - build:
-          requires: [ deps, check, test_unit ]
+          requires:
+            - test
