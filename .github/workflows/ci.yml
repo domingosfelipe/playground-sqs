@@ -24,14 +24,11 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+      - name: Build
+        uses: gradle/gradle-build-action@v3
         with:
           gradle-version: 8.10.2
-      - name: Grant to execute gradlew
-        run: chmod +x ./gradlew
-      - name: Build with gradlew
-        run: ./gradlew clean build jacocoTestReport
+          arguments: clean build jacocoTestReport
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
