@@ -5,7 +5,7 @@ Study purposes only.
 > [!WARNING]
 > This repository is for study purposes only. No warranty is provided.
 
-[![pipeline](https://img.shields.io/github/actions/workflow/status/domingosfelipe/playground-sqs/ci.yml?label=pipeline&logo=github)](https://github.com/domingosfelipe/playground-sqs/actions/workflows/ci.yml) [![artifacts](https://img.shields.io/badge/artifacts-attested-brightgreen?logo=github)](https://github.com/domingosfelipe/playground-sqs#artifact-attestation)
+[![pipeline](https://img.shields.io/github/actions/workflow/status/domingosfelipe/playground-sqs/ci.yml?label=pipeline&logo=github)](https://github.com/domingosfelipe/playground-sqs/actions/workflows/ci.yml) [![artifacts](https://img.shields.io/badge/artifacts-attested-brightgreen?logo=github)](https://github.com/domingosfelipe/playground-sqs#artifact-attestation) [![CircleCI](https://dl.circleci.com/status-badge/img/gh/domingosfelipe/playground-sqs/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/domingosfelipe/playground-sqs/tree/main)
 
 ## Run Locally
 
