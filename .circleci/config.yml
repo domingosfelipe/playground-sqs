@@ -1,11 +1,9 @@
 version: 2.1
 
 executors:
-  jdk21:
-    docker:
-      - image: gradle:8.9.0-jdk21
-    working_directory: ~/project
-    resource_class: small
+  jdk21-machine:
+    machine:
+      image: ubuntu-2204:current
     environment:
       GRADLE_USER_HOME: ~/.gradle
 
@@ -24,7 +22,7 @@ commands:
                 DIST_VER=$(grep -oE 'gradle-[0-9][^/-]*' gradle/wrapper/gradle-wrapper.properties | head -1 | cut -d- -f2)
               fi
               if [ -z "$DIST_VER" ]; then
-                DIST_VER=8.9
+                DIST_VER=8.10.2
               fi
               gradle wrapper --gradle-version "$DIST_VER" --no-daemon
               chmod +x ./gradlew
@@ -46,7 +44,7 @@ commands:
 
 jobs:
   test:
-    executor: jdk21
+    executor: jdk21-machine
     steps:
       - checkout
       - ensure_wrapper
@@ -65,7 +63,7 @@ jobs:
           path: build/reports/jacoco/test/html
 
   build:
-    executor: jdk21
+    executor: jdk21-machine
     steps:
       - checkout
       - ensure_wrapper
