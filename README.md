@@ -1,30 +1,49 @@
 # playground-sqs
 
-Study purposes only.
+A sample project demonstrating how to use AWS SQS locally with LocalStack, built with Java 21 and Gradle.
 
 > [!WARNING]
-> This repository is for study purposes only. No warranty is provided.
+> This repository is provided for study purposes only. No warranty or support is offered.
 
-[![pipeline](https://img.shields.io/github/actions/workflow/status/domingosfelipe/playground-sqs/ci.yml?label=pipeline&logo=github)](https://github.com/domingosfelipe/playground-sqs/actions/workflows/ci.yml) [![artifacts](https://img.shields.io/badge/artifacts-attested-brightgreen?logo=github)](https://github.com/domingosfelipe/playground-sqs#artifact-attestation) [![circleci](https://img.shields.io/circleci/build/github/domingosfelipe/playground-sqs/main?label=circleci&logo=circleci&style=flat-square)](https://app.circleci.com/pipelines/github/domingosfelipe/playground-sqs?branch=main)
+<p align="left">
+  <a href="https://github.com/domingosfelipe/playground-sqs/actions/workflows/ci.yml?branch=main">
+    <img alt="GitHub CI Status" src="https://img.shields.io/github/actions/workflow/status/domingosfelipe/playground-sqs/ci.yml?label=CI&style=plastic">
+  </a>
+  <a href="https://app.circleci.com/pipelines/github/domingosfelipe/playground-sqs?branch=main">
+    <img alt="CircleCI Status" src="https://img.shields.io/circleci/build/github/domingosfelipe/playground-sqs/main?label=CircleCI&style=plastic">
+  </a>
+    <a href="https://github.com/domingosfelipe/playground-sqs/blob/main/LICENSE">
+    <img alt="License" src="https://img.shields.io/github/license/domingosfelipe/playground-sqs?label=License&style=plastic&color=blue">
+  </a>  
+</p>
+
+## Requirements
+
+- Docker
+- Java 21
+- Gradle
 
 ## Run Locally
 
-1. Run docker compose to create container with LocalStack and `sample-queue`:
+1. Start LocalStack container with the sample SQS queue:
 
     ```shell
     docker-compose up -d
     ```
-3. Run gradle build to run all tests and build project:
+
+2. Build the project and run all tests using Gradle:
 
     ```shell
-    gradlew build
+    ./gradlew build
     ```
-4. Finally, run project:
+
+3. Run the Spring Boot application:
 
     ```shell
-    gradlew bootRun
+    ./gradlew bootRun
     ```
-5. All done. Project is running :tada:!
+
+4. The project is now running locally :tada:!
 
 > [!TIP]
 > Use [LocalStack](https://app.localstack.cloud/sign-in) website to manage all project queues
