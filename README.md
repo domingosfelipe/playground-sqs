@@ -7,14 +7,17 @@ A sample project demonstrating how to use AWS SQS locally with LocalStack, built
 
 <p align="left">
   <a href="https://github.com/domingosfelipe/playground-sqs/actions/workflows/ci.yml?branch=main">
-    <img alt="GitHub CI Status" src="https://img.shields.io/github/actions/workflow/status/domingosfelipe/playground-sqs/ci.yml?label=CI&style=plastic">
+    <img alt="GitHub CI Status" src="https://img.shields.io/github/actions/workflow/status/domingosfelipe/playground-sqs/ci.yml?label=CI&style=flat">
   </a>
-  <a href="https://app.circleci.com/pipelines/github/domingosfelipe/playground-sqs?branch=main">
-    <img alt="CircleCI Status" src="https://img.shields.io/circleci/build/github/domingosfelipe/playground-sqs/main?label=CircleCI&style=plastic">
-  </a>
-    <a href="https://github.com/domingosfelipe/playground-sqs/blob/main/LICENSE.txt">
-    <img alt="License" src="https://img.shields.io/github/license/domingosfelipe/playground-sqs?label=License&style=plastic&color=blue">
+  <a href="https://codecov.io/github/domingosfelipe/playground-sqs" > 
+    <img src="https://codecov.io/github/domingosfelipe/playground-sqs/graph/badge.svg?token=53KWKPNJG8"/> 
   </a>  
+  <a href="https://app.circleci.com/pipelines/github/domingosfelipe/playground-sqs?branch=main">
+    <img alt="CircleCI Status" src="https://img.shields.io/circleci/build/github/domingosfelipe/playground-sqs/main?label=CircleCI&style=flat">
+  </a>
+  <a href="https://github.com/domingosfelipe/playground-sqs/blob/main/LICENSE.txt">
+    <img alt="License" src="https://img.shields.io/github/license/domingosfelipe/playground-sqs?label=License&style=flat&color=blue">
+  </a>
 </p>
 
 ## Requirements
