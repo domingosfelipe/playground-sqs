@@ -2,9 +2,8 @@ name: attestation
 on:
   workflow_run:
     workflows: [CI]
-    types: [completed]
     branches: [main]
-    paths-ignore: ['README.md','LICENSE.txt','.gitignore']
+    types: [completed]
 
 permissions:
   contents: read
@@ -25,4 +24,4 @@ jobs:
       - name: Attest build provenance
         uses: actions/attest-build-provenance@v1
         with:
-          subject-paths: dist/*.jar
+          subject-path: dist/*.jar
