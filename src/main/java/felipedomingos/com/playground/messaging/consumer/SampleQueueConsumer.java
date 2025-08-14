@@ -9,12 +9,12 @@ import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 @Component
 public class SampleQueueConsumer extends AbstractConsumer {
 
-    public SampleQueueConsumer(@Value("${sqs.queues.sample}") String queue, SqsAsyncClient sqsAsyncClient) {
-        super(queue, sqsAsyncClient);
-    }
+	public SampleQueueConsumer(@Value("${sqs.queues.sample}") String queue, SqsAsyncClient sqsAsyncClient) {
+		super(queue, sqsAsyncClient);
+	}
 
-    @Scheduled(fixedRate = 20000)
-    public void consume() {
-        super.consume();
-    }
+	@Scheduled(fixedRate = 20000)
+	public void consume() {
+		super.consume();
+	}
 }

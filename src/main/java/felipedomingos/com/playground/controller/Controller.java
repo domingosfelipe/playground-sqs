@@ -13,21 +13,21 @@ import java.util.List;
 @RequestMapping("/v1")
 public class Controller {
 
-  private final SampleQueueProducer producer;
+	private final SampleQueueProducer producer;
 
-  public Controller(SampleQueueProducer producer) {
-    this.producer = producer;
-  }
+	public Controller(SampleQueueProducer producer) {
+		this.producer = producer;
+	}
 
-  @PostMapping("/message")
-  public ResponseEntity<Void> post(@RequestBody String message) {
-    producer.produce(message);
-    return ResponseEntity.accepted().build();
-  }
+	@PostMapping("/message")
+	public ResponseEntity<Void> post(@RequestBody String message) {
+		producer.produce(message);
+		return ResponseEntity.accepted().build();
+	}
 
-  @PostMapping("/messages")
-  public ResponseEntity<Void> post(@RequestBody List<String> messages) {
-    producer.produce(messages);
-    return ResponseEntity.accepted().build();
-  }
+	@PostMapping("/messages")
+	public ResponseEntity<Void> post(@RequestBody List<String> messages) {
+		producer.produce(messages);
+		return ResponseEntity.accepted().build();
+	}
 }

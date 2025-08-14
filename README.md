@@ -29,21 +29,21 @@ A sample project demonstrating how to use **AWS SQS** locally with **LocalStack*
 
 1. Start LocalStack container with the sample SQS queue:
 
-    ```shell
-    docker-compose up -d
-    ```
+	  ```shell
+		docker-compose up -d
+		```
 
 2. Build the project and run all tests using Gradle:
 
-    ```shell
-    ./gradlew build
-    ```
+	  ```shell
+		./gradlew build
+		```
 
 3. Run the Spring Boot application:
 
-    ```shell
-    ./gradlew bootRun
-    ```
+	  ```shell
+		./gradlew bootRun
+		```
 
 4. The project is now running locally :tada:
 

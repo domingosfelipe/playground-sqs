@@ -7,78 +7,85 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
-import software.amazon.awssdk.services.sqs.model.*;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageResponse;
+import software.amazon.awssdk.services.sqs.model.Message;
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AbstractConsumerTest {
 
-  @Mock SqsAsyncClient sqsAsyncClient;
+	final String queue = "https://domain.com/playground";
+	@Mock SqsAsyncClient sqsAsyncClient;
+	TestableConsumer consumer;
 
-  final String queue = "https://domain.com/playground";
-  TestableConsumer consumer;
+	@BeforeEach
+	void setup() {
+		consumer = new TestableConsumer(queue, sqsAsyncClient);
+	}
 
-  static class TestableConsumer extends AbstractConsumer {
-    TestableConsumer(String queue, SqsAsyncClient client) { super(queue, client); }
-    public void consume() { super.consume(); }
-  }
+	@Test
+	void testConsume_handlingError() {
+		when(sqsAsyncClient.receiveMessage(any(ReceiveMessageRequest.class)))
+			.thenReturn(CompletableFuture.failedFuture(new RuntimeException("exception")));
+		consumer.consume();
+		verifyNoMoreInteractions(sqsAsyncClient);
+	}
 
-  @BeforeEach
-  void setup() {
-    consumer = new TestableConsumer(queue, sqsAsyncClient);
-  }
+	@Test
+	void testConsume_handlingEmptyMessages() {
+		var response = ReceiveMessageResponse.builder()
+			.messages(List.of())
+			.build();
+		when(sqsAsyncClient.receiveMessage(any(ReceiveMessageRequest.class)))
+			.thenReturn(CompletableFuture.completedFuture(response));
+		consumer.consume();
+		verifyNoMoreInteractions(sqsAsyncClient);
+	}
 
-  @Test
-  void testConsume_handlingError() {
-    when(sqsAsyncClient.receiveMessage(any(ReceiveMessageRequest.class)))
-        .thenReturn(CompletableFuture.failedFuture(new RuntimeException("exception")));
-    consumer.consume();
-    verifyNoMoreInteractions(sqsAsyncClient);
-  }
+	@Test
+	void testConsume() {
+		var msg1 = Message.builder().messageId("m-1").receiptHandle("rh-1").body("body-1").build();
+		var msg2 = Message.builder().messageId("m-2").receiptHandle("rh-2").body("body-2").build();
+		var response = ReceiveMessageResponse.builder().messages(msg1, msg2).build();
+		when(sqsAsyncClient.receiveMessage(any(ReceiveMessageRequest.class)))
+			.thenReturn(CompletableFuture.completedFuture(response));
+		when(sqsAsyncClient.deleteMessage(any(DeleteMessageRequest.class)))
+			.thenReturn(CompletableFuture.completedFuture(DeleteMessageResponse.builder().build()));
+		consumer.consume();
 
-  @Test
-  void testConsume_handlingEmptyMessages() {
-    var response = ReceiveMessageResponse.builder()
-        .messages(List.of())
-        .build();
-    when(sqsAsyncClient.receiveMessage(any(ReceiveMessageRequest.class)))
-        .thenReturn(CompletableFuture.completedFuture(response));
-    consumer.consume();
-    verifyNoMoreInteractions(sqsAsyncClient);
-  }
+		var receiveCaptor = ArgumentCaptor.forClass(ReceiveMessageRequest.class);
+		verify(sqsAsyncClient).receiveMessage(receiveCaptor.capture());
+		var actual = receiveCaptor.getValue();
+		assertEquals(queue, actual.queueUrl());
+		assertEquals(Integer.valueOf(10), actual.maxNumberOfMessages());
+		assertEquals(Integer.valueOf(20), actual.waitTimeSeconds());
+		assertEquals(Integer.valueOf(30), actual.visibilityTimeout());
 
-  @Test
-  void testConsume() {
-    var msg1 = Message.builder().messageId("m-1").receiptHandle("rh-1").body("body-1").build();
-    var msg2 = Message.builder().messageId("m-2").receiptHandle("rh-2").body("body-2").build();
-    var response = ReceiveMessageResponse.builder().messages(msg1, msg2).build();
-    when(sqsAsyncClient.receiveMessage(any(ReceiveMessageRequest.class)))
-        .thenReturn(CompletableFuture.completedFuture(response));
-    when(sqsAsyncClient.deleteMessage(any(DeleteMessageRequest.class)))
-        .thenReturn(CompletableFuture.completedFuture(DeleteMessageResponse.builder().build()));
-    consumer.consume();
+		var deleteCaptor = ArgumentCaptor.forClass(DeleteMessageRequest.class);
+		verify(sqsAsyncClient, times(2)).deleteMessage(deleteCaptor.capture());
+		assertEquals("rh-1", deleteCaptor.getAllValues().get(0).receiptHandle());
+		assertEquals(queue, deleteCaptor.getAllValues().get(0).queueUrl());
+		assertEquals("rh-2", deleteCaptor.getAllValues().get(1).receiptHandle());
+		assertEquals(queue, deleteCaptor.getAllValues().get(1).queueUrl());
 
-    var receiveCaptor = ArgumentCaptor.forClass(ReceiveMessageRequest.class);
-    verify(sqsAsyncClient).receiveMessage(receiveCaptor.capture());
-    var actual = receiveCaptor.getValue();
-    assertEquals(queue, actual.queueUrl());
-    assertEquals(Integer.valueOf(10), actual.maxNumberOfMessages());
-    assertEquals(Integer.valueOf(20), actual.waitTimeSeconds());
-    assertEquals(Integer.valueOf(30), actual.visibilityTimeout());
+		verifyNoMoreInteractions(sqsAsyncClient);
+	}
 
-    var deleteCaptor = ArgumentCaptor.forClass(DeleteMessageRequest.class);
-    verify(sqsAsyncClient, times(2)).deleteMessage(deleteCaptor.capture());
-    assertEquals("rh-1", deleteCaptor.getAllValues().get(0).receiptHandle());
-    assertEquals(queue,  deleteCaptor.getAllValues().get(0).queueUrl());
-    assertEquals("rh-2", deleteCaptor.getAllValues().get(1).receiptHandle());
-    assertEquals(queue,  deleteCaptor.getAllValues().get(1).queueUrl());
+	static class TestableConsumer extends AbstractConsumer {
+		TestableConsumer(String queue, SqsAsyncClient client) {super(queue, client);}
 
-    verifyNoMoreInteractions(sqsAsyncClient);
-  }
+		public void consume() {super.consume();}
+	}
 }

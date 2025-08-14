@@ -8,6 +8,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 class AppTest extends LocalStackContainerConfig {
 
-  @Test
-  void contextLoads() {}
+	@Test
+	void contextLoads() {}
 }

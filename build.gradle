@@ -1,83 +1,83 @@
 plugins {
-    id 'java'
-    id 'org.springframework.boot' version '3.3.2'
-    id 'io.spring.dependency-management' version '1.1.6'
-    id 'jacoco'
+  id 'java'
+	id 'org.springframework.boot' version '3.3.2'
+	id 'io.spring.dependency-management' version '1.1.6'
+	id 'jacoco'
 }
 
 group = 'felipedomingos.com.playground'
 version = '1.0-SNAPSHOT'
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
 }
 
 jacoco {
-    toolVersion = "0.8.11"
+	toolVersion = "0.8.11"
 }
 
 
 def jacocoExcludes = [
-        '**/config/**',
-        '**/controller/**'
+	'**/config/**',
+	'**/controller/**'
 ]
 
 
 repositories {
-    mavenCentral()
+	mavenCentral()
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs:3.2.1'
-    implementation 'software.amazon.awssdk:sqs'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation "org.testcontainers:junit-jupiter"
-    testImplementation "org.testcontainers:localstack"
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testImplementation 'org.mockito:mockito-junit-jupiter:5.12.0'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs:3.2.1'
+	implementation 'software.amazon.awssdk:sqs'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation "org.testcontainers:junit-jupiter"
+	testImplementation "org.testcontainers:localstack"
+	testImplementation 'org.junit.jupiter:junit-jupiter'
+	testImplementation 'org.mockito:mockito-junit-jupiter:5.12.0'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {
-    useJUnitPlatform()
-    finalizedBy jacocoTestReport
+	useJUnitPlatform()
+	finalizedBy jacocoTestReport
 }
 
 jacocoTestReport {
-    dependsOn test
-    reports {
-        xml.required = true
-        html.required = true
-    }
+	dependsOn test
+	reports {
+		xml.required = true
+		html.required = true
+	}
 }
 
 jacocoTestCoverageVerification {
-    dependsOn test
-    violationRules {
-        rule {
-            limit {
-                minimum = 0.80
-            }
-        }
-    }
+	dependsOn test
+	violationRules {
+		rule {
+			limit {
+				minimum = 0.80
+			}
+		}
+	}
 }
 
 tasks.withType(JacocoReport).configureEach {
-    classDirectories.setFrom(
-            files(classDirectories.files.collect { dir ->
-                fileTree(dir: dir, exclude: jacocoExcludes)
-            })
-    )
+	classDirectories.setFrom(
+		files(classDirectories.files.collect { dir ->
+			fileTree(dir: dir, exclude: jacocoExcludes)
+		})
+	)
 }
 
 tasks.withType(JacocoCoverageVerification).configureEach {
-    classDirectories.setFrom(
-            files(classDirectories.files.collect { dir ->
-                fileTree(dir: dir, exclude: jacocoExcludes)
-            })
-    )
+	classDirectories.setFrom(
+		files(classDirectories.files.collect { dir ->
+			fileTree(dir: dir, exclude: jacocoExcludes)
+		})
+	)
 }

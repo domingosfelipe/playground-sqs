@@ -14,15 +14,15 @@ import java.util.concurrent.Executors;
 @EnableScheduling
 public class SchedulingConfig implements SchedulingConfigurer {
 
-  @Bean
-  TaskScheduler taskScheduler() {
-    var factory = Thread.ofVirtual().name("vt-sched-", 0).factory();
-    var executor = Executors.newScheduledThreadPool(1, factory);
-    return new ConcurrentTaskScheduler(executor);
-  }
+	@Bean
+	TaskScheduler taskScheduler() {
+		var factory = Thread.ofVirtual().name("vt-sched-", 0).factory();
+		var executor = Executors.newScheduledThreadPool(1, factory);
+		return new ConcurrentTaskScheduler(executor);
+	}
 
-  @Override
-  public void configureTasks(ScheduledTaskRegistrar registrar) {
-    registrar.setScheduler(taskScheduler());
-  }
+	@Override
+	public void configureTasks(ScheduledTaskRegistrar registrar) {
+		registrar.setScheduler(taskScheduler());
+	}
 }

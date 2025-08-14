@@ -2,11 +2,11 @@
 name: CI
 on:
   push:
-    branches: [main]
-    paths-ignore: ['README.md','LICENSE.txt','.gitignore']
+    branches: [ main ]
+    paths-ignore: [ 'README.md','LICENSE.txt','.gitignore' ]
   pull_request:
-    branches: [main]
-    paths-ignore: ['README.md','LICENSE.txt','.gitignore']
+    branches: [ main ]
+    paths-ignore: [ 'README.md','LICENSE.txt','.gitignore' ]
 
 permissions:
   contents: read

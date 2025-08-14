@@ -10,15 +10,15 @@ import java.util.List;
 @Component
 public class SampleQueueProducer extends AbstractProducer {
 
-  public SampleQueueProducer(@Value("${sqs.queues.sample}") String queue, SqsAsyncClient sqsAsyncClient) {
-    super(queue, sqsAsyncClient);
-  }
+	public SampleQueueProducer(@Value("${sqs.queues.sample}") String queue, SqsAsyncClient sqsAsyncClient) {
+		super(queue, sqsAsyncClient);
+	}
 
-  public void produce(String message) {
-    super.produce(message);
-  }
+	public void produce(String message) {
+		super.produce(message);
+	}
 
-  public void produce(List<String> messages) {
-    super.produce(messages);
-  }
+	public void produce(List<String> messages) {
+		super.produce(messages);
+	}
 }
